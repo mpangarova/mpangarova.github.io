@@ -7,10 +7,9 @@ import (
 	"testing"
 )
 
-// The page runs its own copy of the checks in JavaScript, so a visitor sees
-// them pass without trusting this repository. That copy must not drift from
-// the Go rules. This test reads the page and fails if a rule, a limit or a
-// threshold label no longer matches the constants in this package.
+// The page runs its own JavaScript copy of the checks, so visitors see them
+// pass without trusting this repo. This test fails if a rule, limit or
+// threshold label on the page drifts from the constants here.
 func TestPageRunsTheSameChecks(t *testing.T) {
 	contents, err := os.ReadFile("../index.html")
 	if err != nil {

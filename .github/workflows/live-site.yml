@@ -1,0 +1,57 @@
+name: Live site check
+
+# After GitHub Pages publishes, and once a week: load the live site and make
+# sure it serves both pages and the same data.json as the repository, and
+# that the live data passes its checks. A failure opens an issue.
+on:
+  workflow_run:
+    workflows: [pages-build-deployment, pages build and deployment]
+    types: [completed]
+  schedule:
+    - cron: "41 6 * * 1" # 06:41 UTC every Monday
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: live-site
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check that Pages published
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success'
+        env:
+          PAGES_RUN: ${{ github.event.workflow_run.html_url }}
+        run: |
+          echo "GitHub Pages did not publish: $PAGES_RUN"
+          exit 1
+
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Check the live site
+        run: go run ./cmd/check-live
+
+      - name: Report failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Live site check failed"
+          body="The live site check failed on $(date -u +%F). Details: $RUN_URL"
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body" --assignee "${{ github.repository_owner }}"
+          fi

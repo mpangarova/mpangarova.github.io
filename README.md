@@ -20,8 +20,16 @@ cmd/refresh-climate/
   aggregate.go                Daily values to yearly counts; model alignment
   merge.go                    Which years to fetch; joining them with the file
   *_test.go                   Tests for all of the above, no network needed
-.github/workflows/
-  climate-data.yml            Runs the refresh once a month
+cmd/check-live/
+  main.go                     Checks that the published site serves the repository's data
+  main_test.go                Tests against a local fake site, no network needed
+.github/
+  workflows/
+    tests.yml                 Lint and tests on every push and pull request
+    climate-data.yml          Runs the refresh once a month
+    live-site.yml             Checks the live site after every publish and once a week
+  dependabot.yml              Monthly pull requests for new action versions
+.golangci.yml                 Which linters run, so new releases change nothing by surprise
 go.mod
 _config.yml                   Keeps the Go files out of the published site
 ```
@@ -44,10 +52,17 @@ On the 3rd of every month, GitHub Actions:
 
 If any check fails, the run fails and the site keeps the last good data.
 
+After every publish, and once a week, a second workflow loads the live site
+and checks that it serves both pages and the same `data.json` as the
+repository, and that the live data passes the same checks. If Pages did not
+publish, or the live file is broken or out of date, it opens an issue.
+
 Run it locally:
 
 ```sh
+golangci-lint run ./...
 go test ./... -v
+go run ./cmd/check-live -wait 0      # check the live site once
 go run ./cmd/refresh-climate         # last two years and any new ones
 go run ./cmd/refresh-climate -full   # every year again (heavy, use rarely)
 ```

@@ -31,7 +31,7 @@ func TestAggregateCountsEachKindOfDay(t *testing.T) {
 	base := &data.Place{Name: "Test"}
 	got := aggregate(base, response(
 		day{"2024-07-01", ptr(25), ptr(31), ptr(21)},   // hot day and tropical night
-		day{"2024-07-02", ptr(24), ptr(30), ptr(20)},   // thresholds count: still hot and tropical
+		day{"2024-07-02", ptr(24), ptr(30), ptr(20)},   // at the thresholds: still hot and tropical
 		day{"2024-07-03", ptr(20), ptr(29.9), ptr(19)}, // neither
 		day{"2024-01-10", ptr(-2), ptr(1), ptr(-0.1)},  // frost
 		day{"2024-01-11", ptr(1), ptr(4), ptr(0)},      // 0 °C is not frost
@@ -66,8 +66,7 @@ func TestAggregateCountsEachKindOfDay(t *testing.T) {
 	}
 }
 
-// modelReply builds a fake climate API reply with one value per day,
-// valueFor(year) for every day of each year in from..to.
+// modelReply fakes a climate API reply: valueFor(year) on every day, from..to.
 func modelReply(from, to int, valueFor func(year int) float64) *apiResponse {
 	var r apiResponse
 	for year := from; year <= to; year++ {
@@ -89,8 +88,8 @@ func observedPlace(temp float64) *data.Place {
 }
 
 func TestAlignProjectionShiftsModelOntoObservations(t *testing.T) {
-	// The model runs 2 °C cold on the baseline; after alignment it should sit
-	// on the observed 12 °C, and keep its own warming trend after that.
+	// The model runs 2 °C cold on the baseline. Aligned, it should sit on the
+	// observed 12 °C and keep its own warming trend.
 	reply := modelReply(1950, 2050, func(year int) float64 {
 		if year > 2020 {
 			return 10 + float64(year-2020)*0.1
