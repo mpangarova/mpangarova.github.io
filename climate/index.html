@@ -128,6 +128,12 @@ details{max-width:54rem;margin-inline:auto}
 .kpi .note{font-size:.8rem;font-style:italic;margin-top:.15rem}
 .tip{font-size:.92rem;color:var(--muted);margin:.5rem 0 0;min-height:1.5em}
 .tip b{color:var(--ink)}
+.legend span.dot::before{width:7px;height:7px;border-radius:50%;opacity:.45}
+#bars,#stripes{touch-action:pan-y;cursor:crosshair}
+#bars:focus-visible,#stripes:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:2px}
+.projnote{max-width:42rem;margin:1rem auto 0;font-size:.98rem;color:var(--muted)}
+.projnote b{color:var(--ink)}
+@media (max-width:560px){.projnote{text-align:left}}
 @media (max-width:560px){
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
   .kpi{padding:.85rem .7rem}
@@ -146,7 +152,7 @@ details{max-width:54rem;margin-inline:auto}
 </style>
 <style>
 /* Soft mono palette; colour stays only in the data */
-:root{--paper:#F2F0EC;--sage:#DEDAD3;--surface:#E8E5DF;--line:#CFCBC3;--ink:#2E2D2B;--head:#2E2D2B;--muted:#6B6862;--link:#2E2D2B;--accent:#8C8880;--olive:#3A3936;
+:root{--paper:#F2F0EC;--sage:#DEDAD3;--surface:#E8E5DF;--line:#CFCBC3;--ink:#2E2D2B;--head:#2E2D2B;--muted:#5E5B55;--link:#2E2D2B;--accent:#8C8880;--olive:#3A3936;
   --model:#8C8880;--pill-on-bg:#3A3936;--pill-on-fg:#F2F0EC;--pill-bd:#3A3936;--tint:rgba(46,45,43,.05)}
 .places button.on:hover,.tabs button.on:hover{background:#4A4844}
 .print{background:#E8E5DF;box-shadow:0 1px 2px rgba(28,27,25,.08),0 14px 34px rgba(28,27,25,.10)}
@@ -172,7 +178,7 @@ footer a{color:#D6D2CA}
 
 <div class="wrap print-wrap"><figure class="print" style="margin:0">
   <div class="stripes" id="stripes" role="img" aria-label="Warming stripes, one per year from 1950 to 2025"></div>
-  <figcaption class="stripes-cap"><span id="capFirst">1950</span><span id="stripTip"></span><span id="capLast">2025</span></figcaption>
+  <figcaption class="stripes-cap"><span id="capFirst">1950</span><span id="stripTip" aria-live="polite"></span><span id="capLast">2025</span></figcaption>
 </figure></div>
 
 <main>
@@ -205,7 +211,7 @@ footer a{color:#D6D2CA}
       <button data-k="frost"><span class="lg">Frost days</span><span class="sm">Frost</span> &lt;0°C</button>
     </div>
     <svg id="bars" viewBox="0 0 800 240" role="img" aria-label="Days per year, 1950 to 2025"></svg>
-    <p class="tip" id="barTip"></p>
+    <p class="tip" id="barTip" aria-live="polite"></p>
     <div class="legend"><span style="--c:var(--ink)">10-year average</span></div>
   </div>
 </section>
@@ -216,7 +222,8 @@ footer a{color:#D6D2CA}
     <hr class="divider">
     <p class="lede">Annual mean temperature for this place only: what was measured, and what a climate model (EC-Earth3P-HR, CMIP6) expects, both smoothed over 10 years.</p>
     <svg id="proj" viewBox="0 0 800 260" role="img" aria-label="Observed and projected temperature"></svg>
-    <div class="legend"><span style="--c:var(--hot)">observed</span><span class="dash" style="--c:var(--model)">model</span></div>
+    <div class="legend"><span style="--c:var(--hot)">observed</span><span class="dot" style="--c:var(--hot)">single years</span><span class="dash" style="--c:var(--model)">model</span></div>
+    <p class="projnote" id="projNote"></p>
   </div>
 </section>
 
@@ -256,6 +263,7 @@ footer a{color:#D6D2CA}
 
 <style>
 /* Review pass: shorter lines, one accent for links, chart caption */
+.hot{color:#A3381F}
 a{text-decoration-color:var(--hot)}
 .hero p,.lede,.honest p,details{max-width:42rem}
 </style>
@@ -278,7 +286,13 @@ function renderStripes(){var c=D[place],base=mean(sel(c,1961,1990,'temp')),an=c.
   var touch=window.matchMedia&&matchMedia('(hover: none)').matches,hint='Each stripe is one year in '+c.name+', blue cooler and red warmer than 1961–1990. '+(touch?'Tap':'Hover over')+' one.';
   c.years.forEach(function(y,i){var d=document.createElement('div');d.style.background=stripeColor(an[i],m);
     d.onmouseenter=d.onclick=function(){$('stripTip').innerHTML='<b>'+c.name+', '+y+'</b> · mean '+fmt(c.temp[i],1)+'°C · <span class="'+(an[i]>0?'hot':'cold')+'">'+sgn(an[i],1)+'°C</span> vs 1961–1990'};el.appendChild(d)});
-  el.onmouseleave=function(){$('stripTip').textContent=hint};$('stripTip').textContent=hint}
+  var cur=-1,kids=el.children;function pick(i){i=Math.max(0,Math.min(kids.length-1,i));cur=i;kids[i].onclick()}
+  el.setAttribute('tabindex','0');el.setAttribute('aria-label','Warming stripes for '+c.name+', '+FIRST+' to '+LAST+'. Use the arrow keys to step through the years.');
+  el.onkeydown=function(e){var k=e.key;if(k==='ArrowLeft')pick(cur<0?kids.length-1:cur-1);else if(k==='ArrowRight')pick(cur<0?kids.length-1:cur+1);else if(k==='Home')pick(0);else if(k==='End')pick(kids.length-1);else return;e.preventDefault()};
+  el.onfocus=function(){if(cur<0)pick(kids.length-1)};
+  el.onpointerdown=el.onpointermove=function(e){var r=el.getBoundingClientRect();pick(Math.floor((e.clientX-r.left)/r.width*kids.length))};
+  function reset(){cur=-1;$('stripTip').textContent=hint}
+  el.onpointerleave=function(e){if(e.pointerType==='mouse')reset()};el.onblur=reset;$('stripTip').textContent=hint}
 function renderKpis(){var c=D[place];$('kpiLede').textContent=c.name+': the 1950–1979 average against the last ten years ('+(LAST-9)+'–'+LAST+').';
   var k=[['Mean temperature','temp',1,'°C',1],['Hot days a year','hot',0,'',1],['Tropical nights a year','trop',0,'',1],['Frost days a year','frost',0,'',-1,'fewer frosts = warmer']];
   $('kpis').innerHTML=k.map(function(r){var a=mean(sel(c,1950,1979,r[1])),b=mean(sel(c,LAST-9,LAST,r[1])),d=b-a,cls=d*r[4]>0?'hot':'cold';
@@ -298,24 +312,40 @@ function renderBars(){var nb=narrow($('bars')),c=D[place],v=c[metric],W=nb?400:8
   var p=[];v.forEach(function(x,i){if(i<9)return;p.push((L+i*bw+bw/2).toFixed(1)+','+(H-B-(H-B-T)*mean(v.slice(i-9,i+1))/mx).toFixed(1))});
   s+='<polyline points="'+p.join(' ')+'" fill="none" stroke="var(--ink)" stroke-width="2.2"/>';
   [FIRST,FIRST+25,FIRST+50,LAST].forEach(function(y){var i=c.years.indexOf(y);if(i>=0)s+='<text x="'+(L+i*bw+bw/2)+'" y="'+(H-6)+'" text-anchor="middle">'+y+'</text>'});$('bars').setAttribute('viewBox','0 0 '+W+' '+H);$('bars').innerHTML=s;
-  var names={hot:'hot days ≥30°C',trop:'tropical nights ≥20°C',frost:'frost days <0°C'},touch=window.matchMedia&&matchMedia('(hover: none)').matches,hint=(touch?'Tap':'Hover over')+' a bar to see the year.';
+  var names={hot:'hot days ≥30°C',trop:'tropical nights ≥20°C',frost:'frost days <0°C'},touch=window.matchMedia&&matchMedia('(hover: none)').matches,hint=(touch?'Tap or slide along':'Hover over')+' the bars to see each year.';
   $('barTip').textContent=hint;
-  var el=$('bars'),show=function(e){var t=e.target;if(t.tagName!=='rect'||t.dataset.i==null)return;var i=+t.dataset.i;
-    el.querySelectorAll('rect[data-i]').forEach(function(r){r.setAttribute('opacity',r===t?'1':'.7')});
-    $('barTip').innerHTML='<b>'+c.name+', '+c.years[i]+'</b> · '+v[i]+' '+names[metric]};
-  el.onmouseover=show;el.onclick=show;el.onmouseleave=function(){el.querySelectorAll('rect[data-i]').forEach(function(r){r.setAttribute('opacity','.7')});$('barTip').textContent=hint}}
+  var el=$('bars'),cur=-1;
+  function pick(i){i=Math.max(0,Math.min(n-1,i));cur=i;
+    el.querySelectorAll('rect[data-i]').forEach(function(r){r.setAttribute('opacity',+r.dataset.i===i?'1':'.45')});
+    $('barTip').innerHTML='<b>'+c.name+', '+c.years[i]+'</b> · '+v[i]+' '+names[metric]}
+  function reset(){cur=-1;el.querySelectorAll('rect[data-i]').forEach(function(r){r.setAttribute('opacity','.7')});$('barTip').textContent=hint}
+  function at(e){var r=el.getBoundingClientRect(),x=(e.clientX-r.left)*W/r.width;return Math.floor((x-L)/bw)}
+  el.onpointermove=el.onpointerdown=function(e){pick(at(e))};
+  el.onpointerleave=function(e){if(e.pointerType==='mouse')reset()};
+  el.setAttribute('tabindex','0');el.setAttribute('aria-label',names[metric]+' per year in '+c.name+', '+FIRST+' to '+LAST+'. Use the arrow keys to step through the years.');
+  el.onkeydown=function(e){var k=e.key,i=cur<0?n-1:cur;if(k==='ArrowLeft')pick(cur<0?n-1:i-1);else if(k==='ArrowRight')pick(cur<0?n-1:i+1);else if(k==='Home')pick(0);else if(k==='End')pick(n-1);else return;e.preventDefault()};
+  el.onfocus=function(){if(cur<0)pick(n-1)};el.onblur=reset}
 function roll(a,w){return a.map(function(_,i){return i<w-1?null:mean(a.slice(i-w+1,i+1))})}
 function renderProj(){var c=D[place],el=$('proj'),np=narrow(el),W=np?400:800,H=np?320:260,L=np?34:40,B=24,T=10;el.setAttribute('viewBox','0 0 '+W+' '+H);$('projTitle').textContent='Where '+c.name+' is heading';
   if(!c.proj){el.innerHTML='<text x="10" y="30">No model data for this place yet.</text>';return}
-  var o=roll(c.temp,10),m=roll(c.proj.temp,10),all=o.concat(m).filter(function(x){return x!=null}),lo=Math.floor(Math.min.apply(null,all)-.3),hi=Math.ceil(Math.max.apply(null,all)+.3);
+  var o=roll(c.temp,10),m=roll(c.proj.temp,10),all=o.concat(m,c.temp).filter(function(x){return x!=null}),lo=Math.floor(Math.min.apply(null,all)-.3),hi=Math.ceil(Math.max.apply(null,all)+.3);
   function X(y){return L+(W-L-10)*(y-1950)/100}function Y(t){return H-B-(H-B-T)*(t-lo)/(hi-lo)}
-  var s='<rect x="'+X(LAST)+'" y="'+T+'" width="'+(X(2050)-X(LAST))+'" height="'+(H-B-T)+'" fill="var(--tint)"/><text x="'+X((LAST+2050)/2)+'" y="'+(T+16)+'" text-anchor="middle">future</text>';
+  var s='<rect x="'+X(LAST)+'" y="'+T+'" width="'+(X(2050)-X(LAST))+'" height="'+(H-B-T)+'" fill="var(--tint)"/><text x="'+X((LAST+2050)/2)+'" y="'+(H-B-8)+'" text-anchor="middle">future</text>';
   for(var g=lo;g<=hi;g++)s+='<line x1="'+L+'" x2="'+(W-10)+'" y1="'+Y(g)+'" y2="'+Y(g)+'" stroke="var(--line)"/><text x="'+(L-6)+'" y="'+(Y(g)+4)+'" text-anchor="end">'+g+'°</text>';
   [1950,1975,2000,2025,2050].forEach(function(y){s+='<text x="'+X(y)+'" y="'+(H-6)+'" text-anchor="middle">'+y+'</text>'});
   c.temp.forEach(function(t,i){s+='<circle cx="'+X(c.years[i])+'" cy="'+Y(t)+'" r="2.2" fill="var(--hot)" opacity=".3"/>'});
   function line(ys,v,col,w,dash){var p=[];v.forEach(function(t,i){if(t!=null)p.push(X(ys[i]).toFixed(1)+','+Y(t).toFixed(1))});return '<polyline points="'+p.join(' ')+'" fill="none" stroke="'+col+'" stroke-width="'+w+'"'+(dash?' stroke-dasharray="6 4"':'')+'/>'}
   s+=line(c.proj.years,m,'var(--model)',2,true)+line(c.years,o,'var(--hot)',3);
-  var iE=c.proj.years.length-1,yE=c.proj.years[iE];if(m[iE]!=null)s+='<text x="'+(X(yE)-4)+'" y="'+(Y(m[iE])-10)+'" text-anchor="end" style="fill:var(--hot);font-size:15px;font-weight:600">~'+fmt(m[iE],1)+'°C around '+yE+'</text>';el.innerHTML=s}
+  var iE=c.proj.years.length-1,yE=c.proj.years[iE];
+  if(m[iE]!=null){var fut=m.filter(function(t,i){return t!=null&&c.proj.years[i]>LAST}),top=Math.max(T+40,Y(Math.max.apply(null,fut))),lx=X(yE);
+    s+='<circle cx="'+lx+'" cy="'+Y(m[iE])+'" r="3.5" fill="var(--model)"/>'+
+       '<text x="'+lx+'" y="'+(top-24)+'" text-anchor="end" style="fill:var(--ink);font-size:15px;font-weight:600">~'+fmt(m[iE],1)+'°C</text>'+
+       '<text x="'+lx+'" y="'+(top-9)+'" text-anchor="end" style="font-size:11px">model, '+yE+'</text>'}
+  el.innerHTML=s;
+  var iN=c.years.indexOf(LAST),jN=c.proj.years.indexOf(LAST),gap=(iN>=0&&jN>=0&&o[iN]!=null&&m[jN]!=null)?o[iN]-m[jN]:0;
+  $('projNote').innerHTML=gap>0.15?'Measurements in '+c.name+' already run about <b>'+fmt(gap,1)+'°C above</b> the model, so read the dashed line as a cautious estimate, not a ceiling.':
+    gap<-0.15?'For now the model runs about '+fmt(-gap,1)+'°C warmer than what was measured in '+c.name+'.':
+    'So far the model and the measurements in '+c.name+' agree closely.'}
 function renderLocal(){var rows=keys.map(function(k){var c=D[k];return {k:k,n:c.name,h:delta(c,'hot'),t:delta(c,'temp'),tr:delta(c,'trop'),tr1:mean(sel(c,LAST-9,LAST,'trop')),h1:mean(sel(c,LAST-9,LAST,'hot'))}}).sort(function(a,b){return b.h-a.h}),mx=Math.max.apply(null,rows.map(function(r){return r.h}))||1;
   $('rank').innerHTML=rows.map(function(r){return '<div class="r'+(r.k===place?' sel':'')+'"><span>'+r.n+'</span><span class="bar"><i style="width:'+Math.max(2,100*r.h/mx)+'%"></i></span><span class="num">'+sgn(r.h)+' days</span></div>'}).join('');
   if(rows.length<2){$('takeaways').innerHTML='';return}
@@ -328,14 +358,14 @@ function renderLocal(){var rows=keys.map(function(k){var c=D[k];return {k:k,n:c.
   if(me&&me.k!==top.k&&me.k!==low.k)out.push('<b>'+me.n+'</b> sits in between: '+sgn(me.h)+' hot days and '+sgn(me.t,1)+'°C.');
   $('takeaways').innerHTML=out.map(function(x){return '<li>'+x+'</li>'}).join('')}
 
-function runChecks(){var lines=['<span class="dim">$ go test ./climate/data -v</span>'],ok=true,t0=performance.now(),all=keys.map(function(k){return D[k]});
-  function test(name,fn,detail){var r;try{r=fn()}catch(e){r=false}ok=ok&&r;lines.push((r?'<span class="pass">--- PASS:</span> ':'<span class="fail">--- FAIL:</span> ')+name+' <span class="dim">('+detail+')</span>')}
+function runChecks(){var lines=['<span class="dim">$ go test ./climate/data -v</span>'],ok=true,nT=0,nP=0,all=keys.map(function(k){return D[k]});
+  function test(name,fn,detail){var r;try{r=fn()}catch(e){r=false}nT++;if(r)nP++;ok=ok&&r;lines.push((r?'<span class="pass">--- PASS:</span> ':'<span class="fail">--- FAIL:</span> ')+name+' <span class="dim">('+detail+')</span>')}
   test('TestEveryYearIsThere',function(){return all.every(function(c){return c.years.length===LAST-FIRST+1&&c.years[0]===FIRST&&c.years[c.years.length-1]===LAST&&LAST>=2025})},keys.length+' places × '+(LAST-FIRST+1)+' years');
   test('TestNoMissingDays',function(){return all.every(function(c){return c.days.every(function(d,i){var y=c.years[i],leap=(y%4===0&&y%100!==0)||y%400===0;return d===(leap?366:365)})})},'365 or 366 days in every year');
   test('TestTemperaturesArePlausible',function(){return all.every(function(c){return c.temp.every(function(t){return t>2&&t<18})})},'annual means between 2°C and 18°C');
   test('TestDayCountsFitInAYear',function(){return all.every(function(c){return ['hot','trop','frost'].every(function(k){return c[k].every(function(x){return x>=0&&x<=366})})})},'hot, tropical and frost days within 0–366');
   test('TestModelMatchesObservations',function(){return all.every(function(c){if(!c.proj)return true;var a=mean(sel(c,1991,2020,'temp')),b=mean(c.proj.temp.filter(function(_,i){var y=c.proj.years[i];return y>=1991&&y<=2020}));return Math.abs(a-b)<0.05})},'model aligned on 1991–2020 within 0.05°C');
-  lines.push(ok?'<span class="pass">PASS</span><span class="dim">  ok  climate/data  '+((performance.now()-t0)/1000).toFixed(3)+'s</span>':'<span class="fail">FAIL</span><span class="dim">  something is off, and now you know too</span>');
+  lines.push(ok?'<span class="pass">PASS</span><span class="dim">  ok  climate/data  '+nP+'/'+nT+' tests</span>':'<span class="fail">FAIL</span><span class="dim">  something is off, and now you know too</span>');
   $('term').innerHTML=lines.join('<br>')}
 
 function renderAll(){renderPlaces();renderStripes();renderKpis();renderStory();renderBars();renderProj();renderLocal()}
