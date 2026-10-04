@@ -160,6 +160,13 @@ details{max-width:54rem;margin-inline:auto}
 footer{background:#2E2D2B;color:#A8A49C;border-top:0}
 footer a{color:#D6D2CA}
 .mark{color:#D6D2CA}
+/* Footer: the same film-edge strip as the homepage, one line at every width */
+footer{position:relative;padding-block:2.6rem 1.6rem}
+footer::before{content:"";position:absolute;left:10px;right:10px;top:10px;height:9px;background:repeating-linear-gradient(90deg,transparent 0 7px,rgba(242,240,236,.35) 7px 17px,transparent 17px 24px)}
+footer .wrap{flex-wrap:nowrap;align-items:center;gap:1rem}
+footer .mark{font:600 .68rem/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;color:#D6D2CA}
+footer .copy,footer .copy a{color:#A8A49C}
+@media (max-width:640px){footer .mark{font-size:.64rem;letter-spacing:.12em}}
 </style>
 </head>
 <body>
@@ -259,7 +266,7 @@ footer a{color:#D6D2CA}
 </section>
 </main>
 
-<footer><div class="wrap"><span class="mark">DATA LAB ▸ 01</span><span>© 2026 <a href="/">Maria Pangarova</a></span></div></footer>
+<footer><div class="wrap"><span class="mark">DATA LAB &nbsp;▸ 01</span><span class="mark copy">© 2026 <a href="/">Maria Pangarova</a></span></div></footer>
 
 <style>
 /* Review pass: shorter lines, one accent for links, chart caption */
