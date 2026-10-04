@@ -15,12 +15,14 @@ permissions:
   contents: read
   issues: write
 
-concurrency:
-  group: live-site
-  cancel-in-progress: true
-
 jobs:
   check:
+    # A cancelled Pages run was replaced by a newer push, whose run checks the site.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'cancelled'
+    # On the job, not the workflow, so a skipped run never cancels a real check.
+    concurrency:
+      group: live-site
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -45,6 +47,7 @@ jobs:
         if: failure()
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }} # gh needs it when the checkout did not run
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           title="Live site check failed"
