@@ -6,9 +6,9 @@ import (
 	"github.com/mpangarova/mpangarova.github.io/climate/data"
 )
 
-// fetchFrom picks the first year to download. Reanalysis data for past years
-// does not change, so only the last few years (and any new ones) are fetched
-// again; a place with no usable history is fetched in full.
+// fetchFrom picks the first year to download. Past reanalysis data never
+// changes, so only recent and new years are fetched again, unless the place
+// has no usable history.
 func fetchFrom(prev *data.Place, oldLast, first, last, refetch int, full bool) int {
 	if full || len(prev.Years) == 0 || prev.Years[0] != first {
 		return first
@@ -23,8 +23,8 @@ func fetchFrom(prev *data.Place, oldLast, first, last, refetch int, full bool) i
 	return from
 }
 
-// merge keeps the years before recent.Years[0] from prev and takes the rest
-// from recent, so the result covers first..last with no gaps.
+// merge takes years before recent.Years[0] from prev and the rest from
+// recent, covering first..last with no gaps.
 func merge(prev, recent *data.Place, first, last int) (*data.Place, error) {
 	yearCount := last - first + 1
 	out := &data.Place{Name: prev.Name, Lat: prev.Lat, Lon: prev.Lon,

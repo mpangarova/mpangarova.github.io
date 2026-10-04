@@ -1,0 +1,38 @@
+name: Tests
+
+# On every push to master and every pull request: lint the Go code (gofmt,
+# go vet, staticcheck and the rest in .golangci.yml) and run all tests,
+# including the one that keeps the page's JavaScript checks in line with the
+# Go ones. No network is needed.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.14.0
+
+      - name: Test
+        run: go test ./... -v

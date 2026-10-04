@@ -2,9 +2,8 @@ package data
 
 import "testing"
 
-// These are the tests the page prints as `go test ./climate/data -v`.
-// They run against the data.json that sits next to them, so CI checks
-// exactly the file that GitHub Pages will serve.
+// The tests the page prints as `go test ./climate/data -v`, run on the
+// data.json next to them: the exact file GitHub Pages serves.
 
 func load(t *testing.T) *Set {
 	t.Helper()
@@ -45,7 +44,7 @@ func TestModelMatchesObservations(t *testing.T) {
 	}
 }
 
-// The checks must also catch broken data, or they prove nothing.
+// The checks must catch broken data, or they prove nothing.
 func TestChecksCatchBrokenData(t *testing.T) {
 	broken := func(edit func(*Set)) *Set {
 		set := load(t)

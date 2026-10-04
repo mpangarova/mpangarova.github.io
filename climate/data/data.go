@@ -1,6 +1,5 @@
-// Package data holds the Climate Lab dataset and the checks it has to pass
-// before it is published. The same checks run in the browser on every page
-// load, and as Go tests in CI before any new data is committed.
+// Package data holds the Climate Lab dataset and the checks it must pass.
+// The page runs the same checks in the browser; CI runs them before any commit.
 package data
 
 import (
@@ -13,9 +12,9 @@ import (
 
 // Thresholds for the yearly day counts, in °C.
 const (
-	HotDayThreshold        = 30.0 // a day is hot when its maximum reaches this
-	TropicalNightThreshold = 20.0 // a night is tropical when its minimum stays at or above this
-	FrostThreshold         = 0.0  // a day has frost when its minimum drops below this
+	HotDayThreshold        = 30.0 // hot day: maximum at or above this
+	TropicalNightThreshold = 20.0 // tropical night: minimum at or above this
+	FrostThreshold         = 0.0  // frost day: minimum below this
 )
 
 // Limits the checks enforce.
@@ -23,10 +22,10 @@ const (
 	PlausibleMeanLow   = 2.0  // lowest believable annual mean, °C
 	PlausibleMeanHigh  = 18.0 // highest believable annual mean, °C
 	MaxDaysInYear      = 366
-	BaselineFrom       = 1991 // reference period the model is aligned on
+	BaselineFrom       = 1991 // the model is aligned on this period
 	BaselineTo         = 2020
-	AlignmentTolerance = 0.05 // allowed model–observation gap on the baseline, °C
-	FirstPublishedYear = 2025 // the data must never end before this year
+	AlignmentTolerance = 0.05 // max model–observation gap on the baseline, °C
+	FirstPublishedYear = 2025 // the data must reach at least this year
 )
 
 // Projection is a climate model run, aligned to the observations.
@@ -35,7 +34,7 @@ type Projection struct {
 	Temp  []float64 `json:"temp"`
 }
 
-// Place is one location with yearly aggregates of daily measurements.
+// Place is one location with yearly aggregates.
 type Place struct {
 	Name  string      `json:"name"`
 	Lat   float64     `json:"lat"`
@@ -77,7 +76,7 @@ func Load(path string) (*Set, error) {
 	return &set, nil
 }
 
-// Save writes the dataset atomically, so a failed write never leaves half a file behind.
+// Save writes atomically, so a failed write never leaves half a file.
 func (s *Set) Save(path string) error {
 	encoded, err := json.Marshal(s)
 	if err != nil {
@@ -112,7 +111,7 @@ type Check struct {
 	Run  func(*Set) error
 }
 
-// Checks are the same five tests the page shows in its terminal.
+// Checks are the five tests the page shows.
 var Checks = []Check{
 	{"TestEveryYearIsThere", EveryYearIsThere},
 	{"TestNoMissingDays", NoMissingDays},
@@ -121,7 +120,7 @@ var Checks = []Check{
 	{"TestModelMatchesObservations", ModelMatchesObservations},
 }
 
-// Validate runs every check and reports all failures together.
+// Validate runs every check and reports all failures.
 func Validate(set *Set) error {
 	var errs []error
 	for _, check := range Checks {
@@ -132,7 +131,7 @@ func Validate(set *Set) error {
 	return errors.Join(errs...)
 }
 
-// EveryYearIsThere: every place covers firstYear..lastYear with no gaps, and every series has one value per year.
+// EveryYearIsThere checks that each place covers firstYear..lastYear, one value per year in every series.
 func EveryYearIsThere(set *Set) error {
 	places, err := set.ordered()
 	if err != nil {
@@ -162,7 +161,7 @@ func EveryYearIsThere(set *Set) error {
 
 func isLeap(year int) bool { return year%4 == 0 && (year%100 != 0 || year%400 == 0) }
 
-// NoMissingDays: every year is built from 365 or 366 daily measurements.
+// NoMissingDays checks that every year has 365 or 366 daily values.
 func NoMissingDays(set *Set) error {
 	places, err := set.ordered()
 	if err != nil {
@@ -182,7 +181,7 @@ func NoMissingDays(set *Set) error {
 	return nil
 }
 
-// TemperaturesArePlausible: annual means stay between PlausibleMeanLow and PlausibleMeanHigh.
+// TemperaturesArePlausible checks annual means against PlausibleMeanLow and PlausibleMeanHigh.
 func TemperaturesArePlausible(set *Set) error {
 	places, err := set.ordered()
 	if err != nil {
@@ -198,7 +197,7 @@ func TemperaturesArePlausible(set *Set) error {
 	return nil
 }
 
-// DayCountsFitInAYear: hot, tropical and frost days are all within 0–MaxDaysInYear.
+// DayCountsFitInAYear checks that all day counts are within 0–MaxDaysInYear.
 func DayCountsFitInAYear(set *Set) error {
 	places, err := set.ordered()
 	if err != nil {
@@ -227,7 +226,7 @@ func meanBetween(years []int, values []float64, from, to int) (float64, bool) {
 	return sum / float64(count), count == to-from+1
 }
 
-// ModelMatchesObservations: the model is aligned on the baseline within AlignmentTolerance.
+// ModelMatchesObservations checks the model's baseline alignment within AlignmentTolerance.
 func ModelMatchesObservations(set *Set) error {
 	places, err := set.ordered()
 	if err != nil {

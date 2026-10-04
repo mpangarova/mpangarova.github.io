@@ -1,0 +1,21 @@
+version: "2"
+
+# The standard set (errcheck, govet, ineffassign, staticcheck, unused) plus a
+# few that fit a small, readable codebase. Listed explicitly so a new
+# golangci-lint release does not switch anything on by surprise.
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - bodyclose
+    - misspell
+    - revive
+    - unconvert
+
+formatters:
+  enable:
+    - gofmt

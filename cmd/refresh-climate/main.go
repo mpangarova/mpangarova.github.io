@@ -1,13 +1,12 @@
-// Command refresh-climate pulls daily measurements from Open-Meteo, turns
-// them into yearly aggregates, runs the dataset checks and writes the file
-// only if every check passes. If anything is off, the published data stays
-// as it was and the command exits with an error, so CI fails loudly.
+// Command refresh-climate turns Open-Meteo's daily measurements into yearly
+// data and writes the file only if every check passes. Otherwise it exits
+// with an error and the published data stays as it was.
 //
 //	go run ./cmd/refresh-climate              # refresh the last two years and any new ones
 //	go run ./cmd/refresh-climate -full        # fetch every year again
 //	go run ./cmd/refresh-climate -until 2025  # stop at a given year
 //
-// The code is split by job:
+// Files:
 //
 //	main.go       flags and the refresh loop
 //	openmeteo.go  HTTP calls to Open-Meteo, with retries
@@ -68,8 +67,8 @@ func main() {
 	log.Printf("all checks passed, wrote %s", *path)
 }
 
-// refreshPlace fetches the recent years for one place, joins them with the
-// years already in the file, and adds the model run if the place has none.
+// refreshPlace fetches recent years for one place, merges them with the
+// file, and fetches the model run if the place has none.
 func refreshPlace(prev *data.Place, oldLast, first, last, refetch int, full bool, pause time.Duration) (*data.Place, error) {
 	from := fetchFrom(prev, oldLast, first, last, refetch, full)
 	log.Printf("%s: fetching %d–%d", prev.Name, from, last)
@@ -82,7 +81,7 @@ func refreshPlace(prev *data.Place, oldLast, first, last, refetch int, full bool
 	if err != nil {
 		return nil, err
 	}
-	// The model run does not change, so it is fetched only for new places.
+	// The model run never changes: fetch it only for new places.
 	place.Proj = prev.Proj
 	if place.Proj == nil {
 		time.Sleep(pause)

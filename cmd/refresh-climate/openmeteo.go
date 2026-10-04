@@ -23,8 +23,8 @@ const (
 
 var client = &http.Client{Timeout: 3 * time.Minute}
 
-// apiResponse is the part of an Open-Meteo reply this command reads.
-// Missing days come back as null, hence the pointers.
+// apiResponse is the part of an Open-Meteo reply we read.
+// Missing days are null, hence the pointers.
 type apiResponse struct {
 	Daily struct {
 		Time  []string   `json:"time"`
@@ -35,8 +35,7 @@ type apiResponse struct {
 	} `json:"daily"`
 }
 
-// fetchObservations asks the archive API for daily mean, max and min
-// temperatures for one place over first..last.
+// fetchObservations gets daily mean, max and min temperatures for first..last.
 func fetchObservations(place *data.Place, first, last int) (*apiResponse, error) {
 	return fetch(archiveAPI, url.Values{
 		"latitude":   {fmt.Sprint(place.Lat)},
@@ -48,7 +47,7 @@ func fetchObservations(place *data.Place, first, last int) (*apiResponse, error)
 	})
 }
 
-// fetchProjection asks the climate API for the model's daily mean temperature, 1950–2050.
+// fetchProjection gets the model's daily mean temperature, 1950–2050.
 func fetchProjection(place *data.Place) (*apiResponse, error) {
 	return fetch(climateAPI, url.Values{
 		"latitude":   {fmt.Sprint(place.Lat)},
@@ -60,7 +59,7 @@ func fetchProjection(place *data.Place) (*apiResponse, error) {
 	})
 }
 
-// fetch calls Open-Meteo and retries when the rate limit or the server says so.
+// fetch calls Open-Meteo, retrying on rate limits and server errors.
 func fetch(endpoint string, query url.Values) (*apiResponse, error) {
 	requestURL := endpoint + "?" + query.Encode()
 	for attempt := 1; ; attempt++ {
@@ -69,7 +68,7 @@ func fetch(endpoint string, query url.Values) (*apiResponse, error) {
 			return nil, err
 		}
 		body, err := io.ReadAll(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close() // already read; a close error changes nothing
 		if err != nil {
 			return nil, err
 		}

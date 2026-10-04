@@ -1,0 +1,11 @@
+version: 2
+
+# Once a month, open a pull request when an action used in .github/workflows
+# has a new version. The Tests workflow runs on it before anything is merged.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "Update"

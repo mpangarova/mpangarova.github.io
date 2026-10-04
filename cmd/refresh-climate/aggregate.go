@@ -7,7 +7,7 @@ import (
 	"github.com/mpangarova/mpangarova.github.io/climate/data"
 )
 
-// minModelDays is how many daily values a model year needs to count as complete.
+// minModelDays is the fewest daily values a complete model year can have.
 const minModelDays = 360
 
 func round2(value float64) float64 { return math.Round(value*100) / 100 }
@@ -21,9 +21,8 @@ func yearOf(day string) (int, bool) {
 	return year, true
 }
 
-// aggregate turns daily measurements into yearly values for first..last.
-// Days with a missing value are skipped, which leaves that year short;
-// data.NoMissingDays then refuses to publish it.
+// aggregate turns daily values into yearly ones for first..last. Missing
+// days are skipped, so data.NoMissingDays rejects that year.
 func aggregate(base *data.Place, response *apiResponse, first, last int) *data.Place {
 	yearCount := last - first + 1
 	place := &data.Place{Name: base.Name, Lat: base.Lat, Lon: base.Lon,
@@ -64,9 +63,8 @@ func aggregate(base *data.Place, response *apiResponse, first, last int) *data.P
 	return place
 }
 
-// alignProjection turns the model's daily values into yearly means and aligns
-// them to the observations with the delta method: the model's anomaly against
-// its own baseline mean is added to the observed baseline mean.
+// alignProjection averages the model by year and aligns it with the delta
+// method: its anomaly from its own baseline mean, added to the observed one.
 func alignProjection(place *data.Place, response *apiResponse) (*data.Projection, error) {
 	values := response.Daily.Mean
 	if values == nil {
