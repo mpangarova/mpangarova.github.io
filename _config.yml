@@ -1,1 +1,8 @@
-theme: jekyll-theme-slate
+# GitHub Pages serves the site as plain HTML. These files are for development
+# and the data pipeline, so they are kept out of the published site.
+exclude:
+  - README.md
+  - go.mod
+  - cmd
+  - climate/data/data.go
+  - climate/data/data_test.go
