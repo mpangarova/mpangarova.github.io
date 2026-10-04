@@ -504,9 +504,11 @@
   .direct a { color: #2E2D2B; text-decoration: none; padding: .55rem 0; border-radius: 4px; transition: color .15s ease; }
   .direct a:hover, .direct a:focus-visible { color: #B8402A; }
   @media (max-width: 400px) { .direct { grid-template-columns: 5.6rem auto 5.6rem auto 5.6rem; column-gap: .25rem; letter-spacing: .12em; } }
-  /* Footer: just the end of the roll */
-  .roll .roll-inner { grid-template-columns: 1fr 1fr; }
-  @media (max-width: 640px) { .roll .roll-inner { grid-template-columns: 1fr; } }
+  /* Footer: one film-edge line at every width, mark left and copyright right */
+  .roll { padding-block: 2.6rem 1.6rem; }
+  .roll .roll-inner { display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center; gap: 1rem; text-align: left; }
+  .roll .roll-mark { white-space: nowrap; }
+  @media (max-width: 640px) { .roll { padding-block: 2.6rem 1.6rem; } .roll .roll-mark { font-size: .64rem; letter-spacing: .12em; } }
 </style>
 </body>
 </html>
