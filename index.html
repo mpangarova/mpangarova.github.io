@@ -1,125 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hey, I'm Maria</title>
+<meta name="description" content="Maria Pangarova, software engineer in Sofia. Ten years of testing, now building secure backend services in Go.">
+<meta property="og:title" content="Hey, I'm Maria">
+<meta property="og:description" content="Ten years of testing, now building secure backend services in Go.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233A3936'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='28' text-anchor='middle' fill='%23F2F0EC'%3EMP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #FFBB00;
+    --yellow-hover: #FFC933;
+    --band-ink: #3A2A05;
+    --band-muted: #5E4A16;
+    --icon: #E6A800;
+    --link: #8A5A00;
+    --ink: #2E3A3B;
+    --muted: #66707A;
+    --paper: #FFFFFF;
+    --surface: #F4F6F5;
+    --line: #E1E5E3;
+    --display: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #16191C; --surface: #1D2124; --line: #2D3336;
+      --ink: #E9ECEF; --muted: #ADB5BD; --link: #FFBB00; --icon: #FFBB00;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #16191C; --surface: #1D2124; --line: #2D3336;
+    --ink: #E9ECEF; --muted: #ADB5BD; --link: #FFBB00; --icon: #FFBB00;
+  }
 
-  <head>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.65; }
+  a { color: var(--link); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; border-radius: 4px; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 500; text-wrap: balance; margin: 0; }
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  .container { max-width: 70rem; margin: 0 auto; padding-inline: clamp(1rem, 4vw, 1.5rem); text-align: center; }
+  .divider { width: 3.25rem; height: 3px; border: 0; background: var(--yellow); margin: 1.5rem auto; }
+  section { padding-block: clamp(3.5rem, 8vw, 5.5rem); }
+  section h2 { font-size: clamp(1.9rem, 4vw, 2.4rem); }
 
-    <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  /* Masthead */
+  .masthead {
+    min-height: 88vh; display: flex; align-items: center;
+    color: #FAF2DC; background-color: #55684F;
+    background-image: linear-gradient(rgba(26,26,26,.25), rgba(26,26,26,.25)), url("img/cliffs.jpg");
+    background-size: cover; background-position: center 55%;
+    padding-block: 5rem;
+  }
+  .masthead .container { width: 100%; }
+  .masthead h1 { font-size: clamp(2.6rem, 7vw, 4.5rem); text-shadow: 0 2px 20px rgba(0,0,0,.3); }
+  .masthead .role { font-size: clamp(1.15rem, 2.4vw, 1.4rem); font-weight: 600; color: var(--yellow); margin: .5rem auto 0; text-shadow: 0 1px 12px rgba(0,0,0,.45); }
+  .masthead p { font-size: clamp(1.08rem, 2vw, 1.25rem); max-width: 36rem; margin: 0 auto 2.25rem; text-shadow: 0 1px 10px rgba(0,0,0,.35); }
+  .btn { display: inline-block; font-weight: 600; font-size: 1.05rem; padding: 1rem 2.3rem; border-radius: 999px; text-decoration: none; background: var(--yellow); color: var(--band-ink); }
+  .btn:hover { background: var(--yellow-hover); }
 
-    <!-- Custom fonts for this template -->
-    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+  /* About band */
+  .about { background: var(--yellow); color: var(--band-ink); }
+  .about .divider { background: var(--band-ink); }
+  .about p { font-size: 1.15rem; line-height: 1.8; max-width: 44rem; margin: 0 auto 1rem; }
+  .about a { color: var(--band-ink); text-decoration-thickness: 2px; }
 
-    <!-- Plugin CSS -->
-    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
+  /* Timeline: horizontal on wide screens, vertical on phones */
+  .timeline { list-style: none; margin: 3rem auto 0; padding: 0; max-width: 60rem; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
+  .timeline::before { content: ""; position: absolute; top: 7px; left: 12.5%; right: 12.5%; height: 2px; background: var(--band-ink); }
+  .timeline li { position: relative; padding: 2rem .75rem 0; }
+  .timeline li::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; border-radius: 50%; background: var(--yellow); border: 2px solid var(--band-ink); }
+  .timeline li.now::before { background: var(--band-ink); }
+  .timeline .when { font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--band-muted); }
+  .timeline .what { font-family: var(--display); font-size: 1.2rem; line-height: 1.3; margin: .2rem 0 .3rem; }
+  .timeline .detail { font-size: .98rem; line-height: 1.5; color: var(--band-muted); }
 
-    <!-- Custom styles for this template -->
-    <link href="css/creative.min.css" rel="stylesheet">
+  /* Beyond code tiles */
+  .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 2.5rem 1.25rem; margin-top: 3rem; }
+  .tile { flex: 0 1 12rem; }
+  .tile svg { width: 3rem; height: 3rem; stroke: var(--icon); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 1rem; }
+  .tile h3 { font-size: 1.3rem; line-height: 1.25; margin-bottom: .5rem; }
+  .tile p { font-size: .98rem; color: var(--muted); margin: 0 auto; max-width: 12rem; }
 
-  </head>
+  /* Contact */
+  .contact { background: var(--surface); border-top: 1px solid var(--line); }
+  .contact .intro { color: var(--muted); max-width: 56rem; margin: 0 auto 2.25rem; font-size: 1.1rem; }
+  .contact .intro span { display: block; }
+  .film { all: unset; box-sizing: border-box; cursor: pointer; display: inline-block; max-width: 100%; position: relative;
+          background: #1C1511; border-radius: 6px; padding: 35px 18px; box-shadow: 0 10px 30px rgba(0,0,0,.18);
+          transform: rotate(-1.5deg); transition: transform .3s ease; }
+  .film:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
+  .film::before, .film::after { content: ""; position: absolute; left: 10px; right: 10px; height: 9px;
+          background: repeating-linear-gradient(90deg, transparent 0 7px, #E9E4DA 7px 17px, transparent 17px 24px); border-radius: 2px; opacity: .85; }
+  .film::before { top: 9px; } .film::after { bottom: 9px; }
+  .edge { position: absolute; left: 22px; font: 600 .62rem/1 var(--sans); letter-spacing: .14em; color: #E0A03A; opacity: .8; }
+  .edge-top { top: 22px; } .edge-bottom { bottom: 22px; left: auto; right: 22px; }
+  .frame { display: block; min-width: min(21rem, 72vw); padding: 1.6rem 1.5rem; border-radius: 3px;
+          background: #7A4A1E; transition: background 1s ease; }
+  .addr { display: block; font-family: "Special Elite", "Courier New", Courier, monospace; font-size: clamp(1rem, 3.4vw, 1.3rem); letter-spacing: .02em; color: #2A2622; overflow-wrap: anywhere;
+          filter: invert(1) blur(5px); transition: filter 1s ease; }
+  .film:hover, .film:focus-visible, .film.developed { transform: rotate(0deg); }
+  .film:hover .frame, .film:focus-visible .frame, .film.developed .frame { background: #FAF2DC; }
+  .film:hover .addr, .film:focus-visible .addr, .film.developed .addr { filter: invert(0) blur(0); }
+  .after, .links { display: grid; grid-template-columns: repeat(2, 7rem); justify-content: center; justify-items: center; align-items: center; }
+  .after { margin-top: 1.75rem; }
+  .icon-btn { all: unset; box-sizing: border-box; cursor: pointer; width: 2.75rem; height: 2.75rem; border-radius: 50%;
+              display: inline-flex; align-items: center; justify-content: center; background: var(--yellow); color: var(--band-ink);
+              transition: transform .15s ease, background .15s ease; }
+  .icon-btn:hover { background: var(--yellow-hover); transform: translateY(-2px); }
+  .icon-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+  .icon-btn svg { width: 1.4rem; height: 1.4rem; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  @media (prefers-reduced-motion: reduce) { .film, .frame, .addr { transition: none; } }
+  .links { margin-top: .9rem; font-size: 1.05rem; }
+  .links a { font-weight: 600; text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
 
-  <body id="page-top">
+  footer { font-size: .85rem; color: var(--muted); padding-block: 2rem 2.5rem; border-top: 1px solid var(--line); }
+  footer a { color: inherit; }
 
-    <header class="masthead text-center text-white d-flex">
-      <div class="container my-auto">
-        <div class="row">
-          <div class="col-lg-10 mx-auto">
-            <h1 class="text-faded mb-5"> Hey, I am Maria </h1>
-            <hr>
-          </div>
-          <div class="col-lg-8 mx-auto">
-            <p class="text mb-5">I live in Sofia, Bulgaria. Currently I am Automation Test <br /> Engineer by day and Developer when need be. </p>
-            <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Find Out More</a>
-          </div>
-        </div>
-      </div>
-    </header>
+  @media (max-width: 860px) {
+    .tile { flex-basis: 13rem; }
+    .timeline { grid-template-columns: 1fr; max-width: 24rem; text-align: left; border-left: 2px solid var(--band-ink); margin-left: auto; }
+    .timeline::before { display: none; }
+    .timeline li { padding: 0 0 1.75rem 1.5rem; }
+    .timeline li:last-child { padding-bottom: 0; }
+    .timeline li::before { top: .3rem; left: -9px; transform: none; }
+  }
+  @media (max-width: 480px) {
+    .tile { flex-basis: 100%; }
+    }
 
-    <section class="bg-primary" id="about">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 mx-auto text-center">
-            <h2 class="section-heading text-white">What's Next</h2>
-            <hr class="light my-4">
-            <p class="text-white">I am looking for new challenges and opportunities to further my career. I enjoy learning new things and am eager to improve my skill set. Collaborating with my colleagues on site is nice, but I also appreciate being able to work from home.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+  /* Beyond code: pinned prints */
+  .pins-sec { background: var(--yellow); padding-block: 1rem clamp(3.5rem, 8vw, 5rem); }
+  .pins-sec > .container { background: #FAF2DC; border-radius: 3px; padding-block: clamp(3rem, 7vw, 4.5rem);
+      box-shadow: 0 1px 2px rgba(58,42,5,.15), 0 18px 40px rgba(58,42,5,.22); transform: rotate(-.4deg); max-width: 70rem; }
+  .pins-sec .pins { gap: 2.5rem 1.1rem; }
+  .pins-sec .pins { transform: rotate(.4deg); }
+  .pins-sec h2 { color: #2E3A3B; }
+  .pins { display: flex; flex-wrap: wrap; justify-content: center; gap: 2.5rem 1.5rem; margin-top: 3rem; }
+  .pin { position: relative; flex: 0 1 11.5rem; background: linear-gradient(165deg, #FFFEFA 0%, #FCF7EC 100%); border: 1px solid rgba(160,120,50,.08); color: #2E3A3B; padding: 1.6rem 1rem 1.3rem; border-radius: 2px;
+         box-shadow: 0 8px 22px rgba(0,0,0,.12); transition: transform .25s ease; }
+  .pin:nth-child(1) { transform: rotate(-2.5deg); } .pin:nth-child(2) { transform: rotate(1.8deg); } .pin:nth-child(3) { transform: rotate(-1deg); }
+  .pin:nth-child(4) { transform: rotate(2.2deg); } .pin:nth-child(5) { transform: rotate(-1.8deg); }
+  .pin:nth-child(2) { background: linear-gradient(170deg, #FFFDF7 0%, #FBF5E8 100%); }
+  .pin:nth-child(4) { background: linear-gradient(160deg, #FFFEF9 0%, #FBF6EA 100%); }
+  .pin:hover { transform: rotate(0) scale(1.04); }
+  .pin::before { content: ""; position: absolute; top: -11px; left: 50%; width: 64px; height: 22px; transform: translateX(-50%) rotate(-3deg);
+                 background: rgba(255,187,0,.8); }
+  .pin svg { width: 2.4rem; height: 2.4rem; stroke: #E6A800; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-bottom: .6rem; }
+  .pin h3 { font-size: 1.1rem; margin-bottom: .35rem; }
+  .pin p { margin: 0; font-size: .92rem; line-height: 1.5; color: #5B6468; }
 
-    <section id="services">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x fa fa-book  text-primary mb-3 sr-icons"></i>
-              <p class="text-muted mb-0">As a physicist by education, appreciate critical thinking and convincing evidence.</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x fa fa-puzzle-piece text-primary mb-3 sr-icons"></i>
-              <p class="text-muted mb-0">I like exploring & analyzing</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x fa fa-map-signs text-primary mb-3 sr-icons"></i>
-              <p class="text-muted mb-0">Love traveling</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x fa fa-camera-retro text-primary mb-3 sr-icons"></i>
-              <p class="text-muted mb-0">And possess <br />fragments of the past</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x ffa fa-lightbulb-o text-primary mb-3 sr-icons"></i>
-              <p class="text-muted mb-0">Grok better by taking notes<br />and seeing graphics</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x fa fa-music text-primary mb-3 sr-icons"></i>
-              <p class="text-muted mb-0">Music and theatre <br /> matters to me</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x fa fa-envelope text-primary mb-3 sr-icons"></i>
-              <p class="text-muted mb-0">Get in touch with me,<br /> send me an <a href="mailto:maria.pangarova@gmail.com"> email </a> </p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 text-center">
-            <div class="service-box mt-5 mx-auto">
-              <i class="fa fa-4x fa fa-cogs text-primary mb-3 sr-icons"></i>
-              <p class="text-muted mb-0">This website is made with Bootstrap <a href="https://github.com/BlackrockDigital/startbootstrap-creative">Creative</a> theme</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  /* Contact: darkroom */
+  .darkroom { background: #120E0C; border-top: 0; color: #EDE6DA; }
+  .darkroom h2 { color: #F3EDE3; }
+  .darkroom .intro { color: #B9AD99; }
+  .darkroom .film { box-shadow: 0 0 0 1px #3A2C22, 0 20px 50px rgba(255,187,0,.08); }
+  .darkroom .links a { color: var(--yellow); }
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  /* Footer: end of roll */
+  .roll { position: relative; background: #1C1511; color: #B9AD99; border-top: 0; padding-block: 2.6rem 1.6rem; }
+  .roll::before { content: ""; position: absolute; left: 10px; right: 10px; top: 10px; height: 9px;
+                  background: repeating-linear-gradient(90deg, transparent 0 7px, #E9E4DA 7px 17px, transparent 17px 24px); opacity: .5; }
+  .roll-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem; text-align: left; }
+  .roll-mark { font: 600 .68rem/1 var(--sans); letter-spacing: .16em; color: #E0A03A; }
+  .roll a { color: inherit; }
 
-    <!-- Plugin JavaScript -->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="vendor/scrollreveal/scrollreveal.min.js"></script>
-    <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+  /* Option 1: yellow band */
+  .v-yellow { background: var(--yellow); }
+  .v-yellow h2 { color: #3A2A05; }
+  .v-yellow .divider { background: #3A2A05; }
+  .v-yellow .intro { color: #5E4A16; }
+  .v-yellow .film { box-shadow: 0 14px 34px rgba(58,42,5,.35); }
+  .v-yellow .icon-btn { background: #3A2A05; color: var(--yellow); }
+  .v-yellow .icon-btn:hover { background: #57410C; }
+  .v-yellow .links a { color: #3A2A05; }
 
-    <!-- Custom scripts for this template -->
-    <script src="js/creative.min.js"></script>
+  /* Option 3: photo paper */
+  .v-paper { background: #FBF8F2; }
+  .v-paper h2 { color: #2E3A3B; }
+  .v-paper .intro { color: #6B6358; }
+  .v-paper .film { box-shadow: 0 14px 34px rgba(60,40,20,.18); }
+  .v-paper .links a { color: #8A5A00; }
 
-  </body>
+  .contact { border-top: 0; }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="container">
+    <h1>Hey, I'm Maria</h1>
+    <p class="role">software engineer</p>
+    <hr class="divider">
+    <p>I live in Sofia, Bulgaria. Used to test by day and code when need be. Now I code by day and test out of habit.</p>
+    <a class="btn" href="#about">Find out more</a>
+  </div>
+</header>
 
+<section class="about" id="about">
+  <div class="container">
+    <h2>About me</h2>
+    <hr class="divider">
+    <p>Spent over ten years in testing and test automation, working on everything from low-level Android and multimedia systems to regression suites for fintech products. Then I switched sides and moved into development.</p>
+    <p>Now I build backend services in Go. The tester in me stuck around: what could go wrong is always part of the plan. The full path is on <a href="https://www.linkedin.com/in/maria-pangarova-1852aa178/" target="_blank" rel="noopener">LinkedIn</a>.</p>
+
+    <ol class="timeline" aria-label="Career path">
+      <li><div class="when">Learn</div><div class="what">Physics</div><div class="detail">How to question things.</div></li>
+      <li><div class="when">Break</div><div class="what">Android &amp; multimedia</div><div class="detail">Put that to work, hunting bugs down to the device level.</div></li>
+      <li><div class="when">Automate</div><div class="what">Fintech regression</div><div class="detail">Let the checks run themselves, where every bug costs money.</div></li>
+      <li class="now"><div class="when">Build</div><div class="what">Go backend</div><div class="detail">Writing the safeguards, and trying to break them too.</div></li>
+    </ol>
+
+  </div>
+</section>
+
+<section class="pins-sec">
+  <div class="container">
+    <h2>Beyond code</h2>
+    <hr class="divider">
+    <div class="pins">
+      <a class="pin pin-lab" href="/climate/"><svg class="mini-bars" viewBox="0 0 64 28" aria-hidden="true"><rect x="2.5" y="23.9" width="2.8" height="2.1" fill="#B9B5AD"/><rect x="6.2" y="24.5" width="2.8" height="1.5" fill="#B9B5AD"/><rect x="10.0" y="24.8" width="2.8" height="1.2" fill="#B9B5AD"/><rect x="13.8" y="25.3" width="2.8" height="0.8" fill="#B9B5AD"/><rect x="17.5" y="25.7" width="2.8" height="0.8" fill="#B9B5AD"/><rect x="21.2" y="25.8" width="2.8" height="0.8" fill="#B9B5AD"/><rect x="25.0" y="26.0" width="2.8" height="0.8" fill="#B9B5AD"/><rect x="28.8" y="24.8" width="2.8" height="1.2" fill="#B9B5AD"/><rect x="32.5" y="25.5" width="2.8" height="0.8" fill="#B9B5AD"/><rect x="36.2" y="24.5" width="2.8" height="1.5" fill="#B9B5AD"/><rect x="40.0" y="21.5" width="2.8" height="4.5" fill="#B9B5AD"/><rect x="43.8" y="20.5" width="2.8" height="5.5" fill="#B9B5AD"/><rect x="47.5" y="18.8" width="2.8" height="7.2" fill="#B9B5AD"/><rect x="51.2" y="18.6" width="2.8" height="7.4" fill="#B8402A"/><rect x="55.0" y="10.1" width="2.8" height="15.9" fill="#B8402A"/><rect x="58.8" y="2.0" width="2.8" height="24.0" fill="#B8402A"/></svg><h3>Climate lab</h3><p>How much warmer is Bulgaria? Physics habits, real data.</p><span class="pin-cta">open the lab</span></a>
+      <div class="pin"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg><h3>Physicist</h3><p>Critical thinking first, convincing evidence always.</p></div>
+      <div class="pin"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6.5" width="19" height="13" rx="2"/><path d="M8 6.5 9.5 4h5L16 6.5"/><circle cx="12" cy="13" r="3.6"/></svg><h3>Film photographer</h3><p>Fragments of the past on film. The top photo is one.</p></div>
+      <div class="pin"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg><h3>Curious traveller</h3><p>New places, the favourite way to learn how things work.</p></div>
+      <div class="pin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg><h3>Music &amp; theatre</h3><p>Both matter a lot, on stage and in headphones alike.</p></div>
+      <div class="pin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21v-9"/><path d="M12 12c0-4-3-6.5-7-6.5 0 4 3 6.5 7 6.5z"/><path d="M12 14c0-3.5 2.6-6 6.5-6 0 3.5-2.6 6-6.5 6z"/><path d="M7 21h10"/></svg><h3>Gardener</h3><p>The best way to unplug. Like refactoring, only slower.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact v-yellow" id="contact">
+  <div class="container">
+    <h2>Say hello</h2>
+    <hr class="divider">
+    <p class="intro"><span>I am looking for new challenges to keep learning and growing.</span> <span>Always keen to deepen my expertise.</span> <span>Work best from home, but enjoy the occasional day in the office with the team.</span></p>
+    <button class="film" id="film" type="button" aria-label="Develop the negative and copy the email address">
+      <span class="edge edge-top" aria-hidden="true">ISO 400 &nbsp;▸ 24A</span>
+      <span class="frame"><span class="addr" id="addr">x</span></span>
+      <span class="edge edge-bottom" id="edge-bottom" aria-hidden="true">HOVER TO DEVELOP &nbsp;▸ 24A</span>
+    </button>
+    <nav class="direct" aria-label="Contact">
+      <a id="write-inline" href="#contact">Email</a><span aria-hidden="true">▸</span><a href="https://www.linkedin.com/in/maria-pangarova-1852aa178/" target="_blank" rel="noopener">LinkedIn</a><span aria-hidden="true">▸</span><a href="https://github.com/mpangarova" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</section>
+
+<footer class="roll">
+  <div class="container roll-inner">
+    <span class="roll-mark">36/36 &nbsp;▸ END OF ROLL</span>
+    <span class="roll-mark roll-copy">© 2026 Maria Pangarova</span>
+  </div>
+</footer>
+
+
+
+<style>
+  /* Garden variant: cream base, sage green alternating bands, mustard lines, moss text, olive buttons */
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    color-scheme: light !important;
+    --cream: #F7F1E3; --sage: #DDE3CF; --mustard: #E3B95B; --moss: #2F3A2E; --olive: #3E4A3A;
+    --moss-muted: #5B6656; --sheet: #FBF7EC;
+    --yellow: #E3B95B !important; --yellow-hover: #4B5946 !important;
+    --band-ink: #2F3A2E !important; --band-muted: #5B6656 !important;
+    --icon: #3E4A3A !important; --link: #2F3A2E !important;
+    --ink: #2F3A2E !important; --muted: #5B6656 !important;
+    --paper: #F7F1E3 !important; --surface: #DDE3CF !important; --line: #D5CDB6 !important;
+  }
+  body { background: var(--cream); color: var(--moss); }
+  a { text-decoration-color: var(--mustard); text-decoration-thickness: 2px; }
+  a:focus-visible, button:focus-visible { outline-color: var(--mustard); }
+  .divider { background: var(--mustard); }
+  .btn { background: var(--olive); color: var(--cream); }
+  .btn:hover { background: #4B5946; }
+  .masthead .role { color: var(--mustard); }
+  .masthead .divider { background: var(--mustard); }
+  .about { background: var(--sage); color: var(--moss); }
+  .about .divider { background: var(--mustard); }
+  .about a { color: var(--moss); text-decoration-color: var(--mustard); }
+  .timeline::before { background: var(--olive); }
+  .timeline li::before { background: var(--sage); border-color: var(--olive); }
+  .timeline li.now::before { background: var(--mustard); border-color: var(--olive); }
+  .timeline .when { color: var(--moss-muted); }
+  .timeline .detail { color: var(--moss-muted); }
+  .pins-sec { background: var(--cream); padding-top: clamp(3rem, 7vw, 4.5rem); }
+  .pins-sec > .container { background: var(--sheet); box-shadow: 0 1px 2px rgba(47,58,46,.10), 0 14px 34px rgba(47,58,46,.12); }
+  .pins-sec h2 { color: var(--moss); }
+  .pin { color: var(--moss); background: #FFFDF6; }
+  .pin:nth-child(2), .pin:nth-child(4) { background: #FDFAF1; }
+  .pin p { color: var(--moss-muted); }
+  .pin::before { background: rgba(227,185,91,.7); }
+  .pin svg { stroke: var(--olive); }
+  .v-yellow { background: var(--sage); }
+  .v-yellow h2 { color: var(--moss); }
+  .v-yellow .divider { background: var(--mustard); }
+  .v-yellow .intro { color: var(--moss-muted); }
+  .v-yellow .film { box-shadow: 0 14px 34px rgba(47,58,46,.28); }
+  .v-yellow .icon-btn { background: var(--olive); color: var(--cream); }
+  .v-yellow .icon-btn:hover { background: #4B5946; }
+  .v-yellow .links a { color: var(--moss); }
+  .edge { color: var(--mustard); }
+  .roll { background: var(--cream); color: var(--moss-muted); border-top: 1px solid var(--line); }
+  .roll::before { background: repeating-linear-gradient(90deg, transparent 0 7px, rgba(62,74,58,.22) 7px 17px, transparent 17px 24px); opacity: 1; }
+    :root { --display: "Libre Caslon Text", Georgia, "Times New Roman", serif !important; }
+  h1, h2, h3, .timeline .what { font-weight: 400; letter-spacing: -.005em; }
+  .roll-mark { color: #B8892A; }
+</style>
+
+<style>
+  /* Mono variant: soft, low-contrast greys like a matte fibre print; the cliffs photo carries the page */
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --cream: #ECEBE8; --sage: #E0DFDB; --mustard: #8C8A85; --moss: #2E2E2C; --olive: #3A3A38;
+    --moss-muted: #6E6D69; --sheet: #F3F2EF;
+    --yellow: #8C8A85 !important; --yellow-hover: #4A4A47 !important;
+    --band-ink: #2E2E2C !important; --band-muted: #6E6D69 !important;
+    --icon: #3A3A38 !important; --link: #2E2E2C !important;
+    --ink: #2E2E2C !important; --muted: #6E6D69 !important;
+    --paper: #ECEBE8 !important; --surface: #E0DFDB !important; --line: #D2D0CB !important;
+  }
+  .masthead { background-color: #6E6D69; background-position: center 62%; }
+  .masthead .role { color: #E4E2DD; }
+  .masthead .divider { background: #E4E2DD; }
+  .btn { background: #3A3A38; color: #ECEBE8; }
+  .btn:hover, .v-yellow .icon-btn:hover { background: #4A4A47; }
+  .pins-sec > .container { box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 14px 34px rgba(0,0,0,.10); }
+  .pin { background: #F6F5F2; }
+  .pin:nth-child(2), .pin:nth-child(4) { background: #F3F2EF; }
+  .pin::before { background: rgba(150,148,142,.45); }
+  .timeline li.now::before { background: #3A3A38; }
+  .film { background: #1D1D1C; }
+  .frame { background: #4A4A47; }
+  .film:hover .frame, .film:focus-visible .frame, .film.developed .frame { background: #F3F2EF; }
+  .addr { color: #2E2E2C; }
+  .edge { color: #A9A7A1; }
+  .v-yellow .film { box-shadow: 0 14px 34px rgba(0,0,0,.22); }
+  .roll-mark { color: #6E6D69; }
+</style>
+
+<style>
+  /* Soft mono palette */
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --cream: #F2F0EC; --sage: #DEDAD3; --mustard: #8C8880; --moss: #2E2D2B; --olive: #3A3936;
+    --moss-muted: #6B6862; --sheet: #E8E5DF;
+    --yellow: #8C8880 !important; --yellow-hover: #4A4844 !important;
+    --band-ink: #2E2D2B !important; --band-muted: #6B6862 !important;
+    --icon: #3A3936 !important; --link: #2E2D2B !important;
+    --ink: #2E2D2B !important; --muted: #6B6862 !important;
+    --paper: #F2F0EC !important; --surface: #E8E5DF !important; --line: #CFCBC3 !important;
+  }
+  .masthead { color: #E8E5DF; background-color: #6B6862; }
+  .masthead h1 { color: #F2F0EC; }
+  .masthead p { color: #E8E5DF; }
+  .masthead .role { color: #D6D2CA; }
+  .masthead .divider { background: rgba(242,240,236,.6); }
+  .btn, .v-yellow .icon-btn { background: #3A3936; color: #F2F0EC; }
+  .btn:hover, .v-yellow .icon-btn:hover { background: #4A4844; }
+  .pin, .pin:nth-child(2), .pin:nth-child(4) { background: #F2F0EC; }
+  .pin::before { background: rgba(140,136,128,.45); }
+  .timeline li.now::before { background: #3A3936; }
+  .frame { background: #4A4844; }
+  .film:hover .frame, .film:focus-visible .frame, .film.developed .frame { background: #F2F0EC; }
+  .addr { color: #2E2D2B; }
+  .roll-mark { color: #6B6862; }
+</style>
+
+<style>
+  /* Hero: button moves to the bottom edge as a light outline, so the cliffs stay visible */
+  .masthead { position: relative; }
+  .masthead p { margin-bottom: 0; }
+  .masthead .container { margin-top: -10vh; }
+  .masthead .btn {
+    position: absolute; left: 50%; bottom: clamp(1.5rem, 6vh, 3rem); transform: translateX(-50%);
+    background: rgba(28,27,25,.28); color: #F2F0EC; border: 1px solid rgba(242,240,236,.55);
+    padding: .7rem 1.6rem; font-size: 1rem; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: .5rem;
+  }
+  .masthead .btn:hover { background: rgba(242,240,236,.16); }
+  /* Hero text in neutral greys (no warm tint) so it sits cleanly on the black-and-white photo */
+  .masthead, .masthead p { color: #E6E6E6; }
+  .masthead h1 { color: #F2F2F2; }
+  .masthead .role { color: #D4D4D4; }
+  .masthead .divider { background: rgba(242,242,242,.6); }
+  .masthead .btn { color: #F2F2F2; background: rgba(26,26,26,.28); border-color: rgba(242,242,242,.55); }
+  .masthead .btn:hover { background: rgba(242,242,242,.16); }
+  /* Climate lab note: a linked pin with mini warming stripes */
+  .pins .pin { flex-basis: 10rem; }
+  .pin:nth-child(6) { transform: rotate(1.4deg); }
+  .pin-lab { display: block; text-decoration: none; color: var(--moss); }
+  .pin-lab:hover, .pin-lab:focus-visible { transform: rotate(0) scale(1.04); }
+  .pin-lab:focus-visible { outline: 3px solid #8C8880; outline-offset: 4px; }
+  .pin svg.mini-bars { display: block; width: 4.6rem; height: 2rem; margin: .2rem auto .75rem; stroke: none; }
+  /* Same text measure as the Climate Lab: 48rem text inside a 70rem frame */
+  .about p, .contact .intro { max-width: 54rem; }
+  .masthead p { max-width: 36rem; }
+  /* The lab note reads as a link */
+  .pin-cta { display: inline-block; margin-top: .6rem; font-size: .92rem; font-weight: 600; color: #B8402A;
+             text-decoration: underline; text-decoration-color: #B8402A; text-decoration-thickness: 1.5px; text-underline-offset: 3px; transition: color .15s ease; }
+  .pin-lab:hover .pin-cta, .pin-lab:focus-visible .pin-cta { color: #8F3020; text-decoration-color: #8F3020; }
+  /* Contact icons live in the dark footer strip */
+  /* Footer as three film-edge prints: mark left, icons centred, copyright right */
+  .roll .roll-inner { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+  .roll .roll-mark { justify-self: start; color: #D6D2CA; }
+  .roll .roll-copy { justify-self: end; color: #A8A49C; text-transform: uppercase; }
+  @media (max-width: 640px) {
+    .roll { padding-block: 2.8rem 1.8rem; }
+    .roll .roll-inner { grid-template-columns: 1fr; justify-items: center; row-gap: .55rem; text-align: center; }
+    .roll .roll-mark, .roll .roll-copy { justify-self: center; }
+  }
+  /* About: LinkedIn link styled like the links under the negative, without the underline */
+  .about p a { color: #2E2D2B; font-weight: 600; text-decoration: none; transition: color .15s ease; }
+  .about p a:hover, .about p a:focus-visible { color: #B8402A; }
+  /* Footer: dark end-of-roll strip in the palette's soft black */
+  .roll { background: #2E2D2B; color: #A8A49C; border-top: 0; }
+  .roll::before { background: repeating-linear-gradient(90deg, transparent 0 7px, rgba(242,240,236,.35) 7px 17px, transparent 17px 24px); opacity: 1; }
+  .roll-mark { color: #D6D2CA; }
+  .roll a { color: #D6D2CA; }
+</style>
+<style>
+  .pins-sec { overflow-x: clip; }
+</style>
+<script>
+  (function () {
+    var film = document.getElementById('film');
+    var addr = document.getElementById('addr');
+    var edge = document.getElementById('edge-bottom');
+    var write = document.getElementById('write');
+    // Assembled at runtime so the address never sits in the page source as plain text
+    var email = ['pangarova', 'maria'].reverse().join('.') + '\u0040' + ['com', 'gmail'].reverse().join('.');
+    var glyphs = 'abcdefghijklmnopqrstuvwxyz';
+    addr.textContent = email.replace(/[a-z]/g, function () { return glyphs[Math.floor(Math.random() * 26)]; });
+
+    var touch = window.matchMedia && window.matchMedia('(hover: none)').matches;
+    var hintText = (touch ? 'TAP TO DEVELOP &amp; COPY' : 'HOVER TO DEVELOP') + ' &nbsp;\u25B8 24A';
+    var readyText = 'CLICK TO COPY &nbsp;\u25B8 24A';
+    var copiedText = 'COPIED \u2713 &nbsp;\u25B8 24A';
+    var selectedText = 'SELECTED, NOW COPY &nbsp;\u25B8 24A';
+    var timer = null;
+    edge.innerHTML = hintText;
+    if (write) write.href = 'mailto:' + email;
+    var inline = document.getElementById('write-inline'); if (inline) inline.href = 'mailto:' + email;
+
+    function on() { addr.textContent = email; if (!timer) edge.innerHTML = readyText; }
+    function off() { if (!film.classList.contains('developed') && !timer) edge.innerHTML = hintText; }
+    function settle() { timer = null; edge.innerHTML = film.classList.contains('developed') ? readyText : hintText; }
+    function flash(text) { edge.innerHTML = text; clearTimeout(timer); timer = setTimeout(settle, 1800); }
+    function selectText() {
+      var r = document.createRange(); r.selectNodeContents(addr);
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      flash(selectedText);
+    }
+    film.addEventListener('mouseenter', on);
+    film.addEventListener('focus', on);
+    film.addEventListener('mouseleave', off);
+    film.addEventListener('blur', off);
+    film.addEventListener('click', function () {
+      on();
+      film.classList.add('developed');
+      try { navigator.clipboard.writeText(email).then(function () { flash(copiedText); }, selectText); } catch (e) { selectText(); }
+    });
+  })();
+</script>
+
+<script>
+  (function () {
+    var y = 'color:#6E6D69;font-weight:bold', d = 'color:#9C8F7C', n = 'color:inherit';
+    console.log('%c$ go test ./maria/next -v', d);
+    console.log('%c--- PASS:%c TestNewChallenges %c(always in)', y, n, d);
+    console.log('%c--- PASS:%c TestLearnSomethingNew %c(every week)', y, n, d);
+    console.log('%c--- PASS:%c TestRemoteFirst %c(home office + coffee trips)', y, n, d);
+    console.log('%cPASS%c  ok  maria/next  0.042s', y, d);
+    console.log('%cFound this? Then you should definitely say hello.', d);
+  })();
+</script>
+
+
+
+<style>
+  /* Review pass: one quiet accent, shorter lines, a flatter "Beyond code", a direct way to write */
+  a { text-decoration-color: #B8402A; }
+  .about p, .contact .intro { max-width: 42rem; }
+  .contact .intro span { display: inline; }
+  .direct { margin: 1.4rem 0 0; font-size: .98rem; color: #6B6862; }
+  .direct a { color: #2E2D2B; font-weight: 600; text-decoration: underline; text-decoration-color: #B8402A; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+  .direct a:hover { color: #B8402A; }
+  .pins-sec > .container { background: transparent; box-shadow: none; transform: none; padding-block: 0; }
+  .pins-sec .pins { transform: none; }
+  .pins-sec { padding-block: clamp(3.5rem, 8vw, 5.5rem); }
+</style>
+
+<style>
+  /* Contact row as one more film-edge print: three equal columns, centred under the negative */
+  .direct { display: grid; grid-template-columns: 7rem auto 7rem auto 7rem; justify-content: center; align-items: center; column-gap: .5rem;
+            margin: 1.6rem 0 0; font: 600 .78rem/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .direct span { color: #A8A49C; font-size: .7rem; }
+  .direct a { color: #2E2D2B; text-decoration: none; padding: .55rem 0; border-radius: 4px; transition: color .15s ease; }
+  .direct a:hover, .direct a:focus-visible { color: #B8402A; }
+  @media (max-width: 400px) { .direct { grid-template-columns: 5.6rem auto 5.6rem auto 5.6rem; column-gap: .25rem; letter-spacing: .12em; } }
+  /* Footer: just the end of the roll */
+  .roll .roll-inner { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 640px) { .roll .roll-inner { grid-template-columns: 1fr; } }
+</style>
+</body>
 </html>

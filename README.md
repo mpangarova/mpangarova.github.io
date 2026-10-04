@@ -1,74 +1,56 @@
-# [Start Bootstrap - Creative](https://startbootstrap.com/template-overviews/creative/)
+# mpangarova.github.io
 
-[Creative](http://startbootstrap.com/template-overviews/creative/) is a one page creative theme for [Bootstrap](http://getbootstrap.com/) created by [Start Bootstrap](http://startbootstrap.com/).
+Personal site of Maria Pangarova, served by GitHub Pages at https://mpangarova.github.io.
 
-## Preview
+## What's here
 
-[![Creative Preview](https://startbootstrap.com/assets/img/templates/creative.jpg)](https://blackrockdigital.github.io/startbootstrap-creative/)
+```
+index.html                    Homepage
+img/cliffs.jpg                Header photo (film)
+climate/
+  index.html                  Climate Lab: "How much warmer is Bulgaria?"
+  data/
+    data.json                 Yearly data the page loads
+    data.go                   Thresholds, limits and the checks the data has to pass
+    data_test.go              The same checks as Go tests
+    page_test.go              Keeps the page's JavaScript checks in line with the Go ones
+cmd/refresh-climate/
+  main.go                     Flags and the refresh loop
+  openmeteo.go                Calls to Open-Meteo, with retries
+  aggregate.go                Daily values to yearly counts; model alignment
+  merge.go                    Which years to fetch; joining them with the file
+  *_test.go                   Tests for all of the above, no network needed
+.github/workflows/
+  climate-data.yml            Runs the refresh once a month
+go.mod
+_config.yml                   Keeps the Go files out of the published site
+```
 
-**[View Live Preview](https://blackrockdigital.github.io/startbootstrap-creative/)**
+Both pages are plain HTML with inline CSS and JavaScript. There is no build step.
 
-## Status
+## Climate Lab data
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/BlackrockDigital/startbootstrap-creative/master/LICENSE)
-[![npm version](https://img.shields.io/npm/v/startbootstrap-creative.svg)](https://www.npmjs.com/package/startbootstrap-creative)
-[![Build Status](https://travis-ci.org/BlackrockDigital/startbootstrap-creative.svg?branch=master)](https://travis-ci.org/BlackrockDigital/startbootstrap-creative)
-[![dependencies Status](https://david-dm.org/BlackrockDigital/startbootstrap-creative/status.svg)](https://david-dm.org/BlackrockDigital/startbootstrap-creative)
-[![devDependencies Status](https://david-dm.org/BlackrockDigital/startbootstrap-creative/dev-status.svg)](https://david-dm.org/BlackrockDigital/startbootstrap-creative?type=dev)
+The page shows yearly aggregates of daily ERA5 reanalysis data from the
+[Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api),
+and a climate model run (EC-Earth3P-HR) from the
+[Open-Meteo Climate API](https://open-meteo.com/en/docs/climate-api).
 
-## Download and Installation
+On the 3rd of every month, GitHub Actions:
 
-To begin using this template, choose one of the following options to get started:
-* [Download the latest release on Start Bootstrap](https://startbootstrap.com/template-overviews/creative/)
-* Install via npm: `npm i startbootstrap-creative`
-* Clone the repo: `git clone https://github.com/BlackrockDigital/startbootstrap-creative.git`
-* [Fork, Clone, or Download on GitHub](https://github.com/BlackrockDigital/startbootstrap-creative)
+1. runs `go test ./... -v` on the code and the data that is live,
+2. runs `go run ./cmd/refresh-climate` to pull the last two years again (plus any new year) and check the whole set,
+3. runs the tests again on the new file,
+4. commits `climate/data/data.json` only if everything passed.
 
-## Usage
+If any check fails, the run fails and the site keeps the last good data.
 
-### Basic Usage
+Run it locally:
 
-After downloading, simply edit the HTML and CSS files included with the template in your favorite text editor to make changes. These are the only files you need to worry about, you can ignore everything else! To preview the changes you make to the code, you can open the `index.html` file in your web browser.
+```sh
+go test ./... -v
+go run ./cmd/refresh-climate         # last two years and any new ones
+go run ./cmd/refresh-climate -full   # every year again (heavy, use rarely)
+```
 
-### Advanced Usage
-
-After installation, run `npm install` and then run `gulp dev` which will open up a preview of the template in your default browser, watch for changes to core template files, and live reload the browser when changes are saved. You can view the `gulpfile.js` to see which tasks are included with the dev environment.
-
-#### Gulp Tasks
-
-- `gulp` the default task that builds everything
-- `gulp dev` browserSync opens the project in your default browser and live reloads when changes are made
-- `gulp css` compiles SCSS files into CSS and minifies the compiled CSS
-- `gulp js` minifies the themes JS file
-- `gulp vendor` copies dependencies from node_modules to the vendor directory
-
-You must have npm and Gulp installed globally on your machine in order to use these features.
-
-## Troubleshooting and Help
-
-Start Bootstrap has a public Slack channel which is a great place to ask questions about this template and all things related to Start Bootstrap.
-
-**[Click here to join the Slack channel!](https://startbootstrap-slack.herokuapp.com/)**
-
-## Bugs and Issues
-
-Have a bug or an issue with this template? [Open a new issue](https://github.com/BlackrockDigital/startbootstrap-creative/issues) here on GitHub or leave a comment on the [template overview page at Start Bootstrap](http://startbootstrap.com/template-overviews/creative/).
-
-## About
-
-Start Bootstrap is an open source library of free Bootstrap templates and themes. All of the free templates and themes on Start Bootstrap are released under the MIT license, which means you can use them for any purpose, even for commercial projects.
-
-* https://startbootstrap.com
-* https://twitter.com/SBootstrap
-
-Start Bootstrap was created by and is maintained by **[David Miller](http://davidmiller.io/)**, Owner of [Blackrock Digital](http://blackrockdigital.io/).
-
-* http://davidmiller.io
-* https://twitter.com/davidmillerskt
-* https://github.com/davidtmiller
-
-Start Bootstrap is based on the [Bootstrap](http://getbootstrap.com/) framework created by [Mark Otto](https://twitter.com/mdo) and [Jacob Thorton](https://twitter.com/fat).
-
-## Copyright and License
-
-Copyright 2013-2018 Blackrock Digital LLC. Code released under the [MIT](https://github.com/BlackrockDigital/startbootstrap-creative/blob/gh-pages/LICENSE) license.
+Older years are kept from `data.json`, because past reanalysis data does not change.
+A full refresh downloads 75+ years per place and can hit Open-Meteo's rate limits.

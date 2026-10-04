@@ -1,0 +1,66 @@
+name: Refresh climate data
+
+# Once a month: pull fresh measurements from Open-Meteo, run the same checks
+# the page runs, and publish only if they pass. A failed check fails the run,
+# and the page keeps the last good data.
+on:
+  schedule:
+    - cron: "17 4 3 * *" # 04:17 UTC on the 3rd of every month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: climate-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Check the code and the data that is live now
+        run: go test ./... -v
+
+      - name: Fetch fresh data and check it
+        run: go run ./cmd/refresh-climate
+
+      - name: Test the new file
+        run: go test ./climate/data -v
+
+      - name: Publish
+        run: |
+          if git diff --quiet -- climate/data/data.json; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add climate/data/data.json
+          git commit -m "Refresh climate data ($(date -u +%F))"
+          git push
+
+      # If anything above failed, open an issue (or comment on the open one),
+      # so the failure shows up in GitHub notifications and by email.
+      - name: Report failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Climate data refresh failed"
+          body="The monthly refresh failed on $(date -u +%F). The site still shows the last good data. Details: $RUN_URL"
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body" --assignee "${{ github.repository_owner }}"
+          fi
